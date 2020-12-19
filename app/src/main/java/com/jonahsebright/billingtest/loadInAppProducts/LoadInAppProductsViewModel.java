@@ -1,9 +1,9 @@
-package com.jonahsebright.billingtest.pay;
+package com.jonahsebright.billingtest.loadInAppProducts;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class PayViewModel extends ViewModel {
+public class LoadInAppProductsViewModel extends ViewModel {
     private MutableLiveData<String> products = new MutableLiveData<>();
 
     public MutableLiveData<String> getProducts() {

@@ -1,6 +1,5 @@
-package com.jonahsebright.billingtest.pay;
+package com.jonahsebright.billingtest.loadInAppProducts;
 
-import android.app.Activity;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
@@ -32,10 +31,9 @@ public class LoadInAppPurchases implements SkuDetailsResponseListener {
         inAppProductsQueriedListener = new NoInAppProductsQueriedListener();
         initPurchaseUpdatedListener();
         initBillingClient(context);
-        startConnectionToGooglePlay();
     }
 
-    private void startConnectionToGooglePlay() {
+    public void startConnectionToGooglePlay() {
         billingClient.startConnection(new BillingClientStateListener() {
             @Override
             public void onBillingSetupFinished(@NonNull BillingResult billingResult) {

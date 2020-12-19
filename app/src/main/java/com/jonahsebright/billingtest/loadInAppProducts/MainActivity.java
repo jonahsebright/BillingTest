@@ -1,4 +1,4 @@
-package com.jonahsebright.billingtest.pay;
+package com.jonahsebright.billingtest.loadInAppProducts;
 
 import android.os.Bundle;
 import android.widget.TextView;
@@ -11,7 +11,7 @@ import com.jonahsebright.billingtest.R;
 
 public class MainActivity extends AppCompatActivity {
 
-    private PayViewModel payViewModel;
+    private LoadInAppProductsViewModel loadInAppProductsViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,18 +19,19 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         ViewModelProvider.Factory factory = new ViewModelProvider.NewInstanceFactory();
-        payViewModel = new ViewModelProvider(this, factory).get(PayViewModel.class);
+        loadInAppProductsViewModel = new ViewModelProvider(this, factory).get(LoadInAppProductsViewModel.class);
 
         LoadInAppPurchases loadInAppPurchases = new LoadInAppPurchases(getApplicationContext());
         ProductsPresenter productsPresenter = new ProductsPresenter();
-        productsPresenter.setPayViewModel(payViewModel);
+        productsPresenter.setLoadInAppProductsViewModel(loadInAppProductsViewModel);
         loadInAppPurchases.setInAppProductsQueriedListener(productsPresenter);
+        loadInAppPurchases.startConnectionToGooglePlay();
 
         setupProductsTextView();
     }
 
     private void setupProductsTextView() {
-        payViewModel.getProducts().observe(this, new Observer<String>() {
+        loadInAppProductsViewModel.getProducts().observe(this, new Observer<String>() {
             @Override
             public void onChanged(String s) {
                 TextView textView = findViewById(R.id.tvProducts);

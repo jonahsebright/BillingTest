@@ -1,4 +1,4 @@
-package com.jonahsebright.billingtest.pay;
+package com.jonahsebright.billingtest.loadInAppProducts;
 
 import com.android.billingclient.api.SkuDetails;
 
