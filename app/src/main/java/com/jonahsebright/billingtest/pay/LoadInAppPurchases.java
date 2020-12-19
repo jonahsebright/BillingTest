@@ -23,12 +23,12 @@ import java.util.List;
 /**
  * Controller of the Pay use-case
  */
-public class Pay implements SkuDetailsResponseListener {
+public class LoadInAppPurchases implements SkuDetailsResponseListener {
     private PurchasesUpdatedListener purchasesUpdatedListener;
     private BillingClient billingClient;
     private InAppProductsQueriedListener inAppProductsQueriedListener;
 
-    public Pay(@NonNull Context context) {
+    public LoadInAppPurchases(@NonNull Context context) {
         inAppProductsQueriedListener = new NoInAppProductsQueriedListener();
         initPurchaseUpdatedListener();
         initBillingClient(context);

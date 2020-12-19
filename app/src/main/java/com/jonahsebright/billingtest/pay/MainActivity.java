@@ -6,7 +6,6 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 
 import com.jonahsebright.billingtest.R;
 
@@ -22,10 +21,10 @@ public class MainActivity extends AppCompatActivity {
         ViewModelProvider.Factory factory = new ViewModelProvider.NewInstanceFactory();
         payViewModel = new ViewModelProvider(this, factory).get(PayViewModel.class);
 
-        Pay pay = new Pay(getApplicationContext());
+        LoadInAppPurchases loadInAppPurchases = new LoadInAppPurchases(getApplicationContext());
         ProductsPresenter productsPresenter = new ProductsPresenter();
         productsPresenter.setPayViewModel(payViewModel);
-        pay.setInAppProductsQueriedListener(productsPresenter);
+        loadInAppPurchases.setInAppProductsQueriedListener(productsPresenter);
 
         setupProductsTextView();
     }
