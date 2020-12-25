@@ -16,6 +16,7 @@ import com.android.billingclient.api.SkuDetailsParams;
 import com.android.billingclient.api.SkuDetailsResponseListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -39,8 +40,8 @@ public class LoadInAppPurchases implements SkuDetailsResponseListener {
             public void onBillingSetupFinished(@NonNull BillingResult billingResult) {
                 System.out.println("Pay.onBillingSetupFinished: ");
                 int responseCode = billingResult.getResponseCode();
-                boolean billingUnavailble = responseCode == BillingResponseCode.BILLING_UNAVAILABLE;
-                System.out.println("billingUnavailble = " + billingUnavailble);
+                boolean billingUnavailable = responseCode == BillingResponseCode.BILLING_UNAVAILABLE;
+                System.out.println("billingUnavailable = " + billingUnavailable);
                 String debugMessage = billingResult.getDebugMessage();
                 System.out.println("debugMessage = " + debugMessage);
                 if (billingResult.getResponseCode() == BillingResponseCode.OK) {
@@ -86,7 +87,10 @@ public class LoadInAppPurchases implements SkuDetailsResponseListener {
     }
 
     public ArrayList<String> getSkuList() {
-        return new ArrayList<>(Collections.singletonList("upgrade_premium"));
+        return new ArrayList<>(Arrays.asList(
+                "product_2_test",
+                "product_1_test"
+        ));
     }
 
     public SkuDetailsParams getSkuDetailsParams() {
@@ -97,6 +101,12 @@ public class LoadInAppPurchases implements SkuDetailsResponseListener {
 
     @Override
     public void onSkuDetailsResponse(@NonNull BillingResult billingResult, @Nullable List<SkuDetails> list) {
+        System.out.println("LoadInAppPurchases.onSkuDetailsResponse");
+        int responseCode = billingResult.getResponseCode();
+        boolean billingUnavailable = responseCode == BillingResponseCode.BILLING_UNAVAILABLE;
+        System.out.println("billingUnavailable = " + billingUnavailable);
+        String debugMessage = billingResult.getDebugMessage();
+        System.out.println("debugMessage = " + debugMessage);
         inAppProductsQueriedListener.onQueried(list);
     }
 

@@ -62,7 +62,8 @@ public class LoadInAppPurchasesTest {
     @Test
     public void getSkuList() throws Exception {
         ArrayList<String> expected = new ArrayList<>();
-        expected.add("upgrade_premium");
+        expected.add("product_1_test");
+        expected.add("product_2_test");
         assertThat(loadInAppPurchases.getSkuList())
                 .usingRecursiveComparison()
                 .isEqualTo(expected);

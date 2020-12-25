@@ -1,17 +1,21 @@
 package com.jonahsebright.billingtest.loadInAppProducts;
 
 import android.os.Bundle;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.jonahsebright.billingtest.R;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     private LoadInAppProductsViewModel loadInAppProductsViewModel;
+    private InAppProductAdapter productAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,15 +31,18 @@ public class MainActivity extends AppCompatActivity {
         loadInAppPurchases.setInAppProductsQueriedListener(productsPresenter);
         loadInAppPurchases.startConnectionToGooglePlay();
 
-        setupProductsTextView();
+        setupProductsListView();
     }
 
-    private void setupProductsTextView() {
-        loadInAppProductsViewModel.getProducts().observe(this, new Observer<String>() {
+    private void setupProductsListView() {
+        RecyclerView productsListView = findViewById(R.id.products);
+        productsListView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        productAdapter = new InAppProductAdapter(new ArrayList<>());
+        productsListView.setAdapter(productAdapter);
+        loadInAppProductsViewModel.getProducts().observe(this, new Observer<ArrayList<ProductModel>>() {
             @Override
-            public void onChanged(String s) {
-                TextView textView = findViewById(R.id.tvProducts);
-                textView.setText(s);
+            public void onChanged(ArrayList<ProductModel> productModels) {
+                productAdapter.setModelsAndUpdateView(productModels);
             }
         });
     }

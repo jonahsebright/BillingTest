@@ -3,14 +3,16 @@ package com.jonahsebright.billingtest.loadInAppProducts;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class LoadInAppProductsViewModel extends ViewModel {
-    private MutableLiveData<String> products = new MutableLiveData<>();
+import java.util.ArrayList;
 
-    public MutableLiveData<String> getProducts() {
+public class LoadInAppProductsViewModel extends ViewModel {
+    private MutableLiveData<ArrayList<ProductModel>> products = new MutableLiveData<>();
+
+    public MutableLiveData<ArrayList<ProductModel>> getProducts() {
         return products;
     }
 
-    public void setProducts(String products) {
+    public void setProducts(ArrayList<ProductModel> products) {
         this.products.setValue(products);
     }
 }
