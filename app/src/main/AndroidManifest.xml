@@ -10,7 +10,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.BillingTest">
-        <activity android:name=".loadInAppProducts.MainActivity">
+        <activity android:name=".app_products.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

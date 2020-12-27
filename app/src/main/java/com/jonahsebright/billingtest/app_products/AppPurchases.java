@@ -1,4 +1,4 @@
-package com.jonahsebright.billingtest.loadInAppProducts;
+package com.jonahsebright.billingtest.app_products;
 
 import android.content.Context;
 
@@ -17,21 +17,25 @@ import com.android.billingclient.api.SkuDetailsResponseListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
  * Controller of the Pay use-case
  */
-public class LoadInAppPurchases implements SkuDetailsResponseListener {
+public class AppPurchases implements SkuDetailsResponseListener {
     private PurchasesUpdatedListener purchasesUpdatedListener;
     private BillingClient billingClient;
     private InAppProductsQueriedListener inAppProductsQueriedListener;
+    private List<SkuDetails> skuDetailsList;
 
-    public LoadInAppPurchases(@NonNull Context context) {
+    public AppPurchases(@NonNull Context context) {
         inAppProductsQueriedListener = new NoInAppProductsQueriedListener();
         initPurchaseUpdatedListener();
         initBillingClient(context);
+    }
+
+    public List<SkuDetails> getSkuDetailsList() {
+        return skuDetailsList;
     }
 
     public void startConnectionToGooglePlay() {
@@ -89,7 +93,8 @@ public class LoadInAppPurchases implements SkuDetailsResponseListener {
     public ArrayList<String> getSkuList() {
         return new ArrayList<>(Arrays.asList(
                 "product_2_test",
-                "product_1_test"
+                "product_1_test",
+                "upgrade_premium"
         ));
     }
 
@@ -107,6 +112,7 @@ public class LoadInAppPurchases implements SkuDetailsResponseListener {
         System.out.println("billingUnavailable = " + billingUnavailable);
         String debugMessage = billingResult.getDebugMessage();
         System.out.println("debugMessage = " + debugMessage);
+        this.skuDetailsList = list;
         inAppProductsQueriedListener.onQueried(list);
     }
 

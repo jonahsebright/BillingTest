@@ -1,4 +1,4 @@
-package com.jonahsebright.billingtest.loadInAppProducts;
+package com.jonahsebright.billingtest.app_products;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,23 +22,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class LoadInAppPurchasesTest {
+public class AppPurchasesTest {
 
-    private LoadInAppPurchases loadInAppPurchases;
+    private AppPurchases appPurchases;
 
     @Before
     public void setUp() throws Exception {
-        loadInAppPurchases = new LoadInAppPurchases(TestUtils.getAppContext());
+        appPurchases = new AppPurchases(TestUtils.getAppContext());
     }
 
     @Test
     public void Create_NoInAppProductsQueriedListenerOnInit() throws Exception {
-        assertThat(loadInAppPurchases.getInAppProductsQueriedListener()).isInstanceOf(LoadInAppPurchases.NoInAppProductsQueriedListener.class);
+        assertThat(appPurchases.getInAppProductsQueriedListener()).isInstanceOf(AppPurchases.NoInAppProductsQueriedListener.class);
     }
 
     @Test
     public void createsPurchaseUpdateListenerInConstructor() throws Exception {
-        assertThat(loadInAppPurchases.getPurchasesUpdatedListener())
+        assertThat(appPurchases.getPurchasesUpdatedListener())
                 .usingRecursiveComparison()
                 .isEqualTo(new PurchasesUpdatedListener() {
                     @Override
@@ -52,9 +52,9 @@ public class LoadInAppPurchasesTest {
     public void initialisesBillingClient() throws Exception {
         BillingClient expected = BillingClient.newBuilder(TestUtils.getAppContext())
                 .enablePendingPurchases()
-                .setListener(loadInAppPurchases.getPurchasesUpdatedListener())
+                .setListener(appPurchases.getPurchasesUpdatedListener())
                 .build();
-        assertThat(loadInAppPurchases.getBillingClient())
+        assertThat(appPurchases.getBillingClient())
                 .usingRecursiveComparison()
                 .isEqualTo(expected);
     }
@@ -64,7 +64,7 @@ public class LoadInAppPurchasesTest {
         ArrayList<String> expected = new ArrayList<>();
         expected.add("product_1_test");
         expected.add("product_2_test");
-        assertThat(loadInAppPurchases.getSkuList())
+        assertThat(appPurchases.getSkuList())
                 .usingRecursiveComparison()
                 .isEqualTo(expected);
     }
@@ -72,9 +72,9 @@ public class LoadInAppPurchasesTest {
     @Test
     public void getSkuDetailsParamsForInAppPurchases() throws Exception {
         SkuDetailsParams.Builder params = SkuDetailsParams.newBuilder()
-                .setSkusList(loadInAppPurchases.getSkuList())
+                .setSkusList(appPurchases.getSkuList())
                 .setType(BillingClient.SkuType.INAPP);
-        assertThat(loadInAppPurchases.getSkuDetailsParams())
+        assertThat(appPurchases.getSkuDetailsParams())
                 .usingRecursiveComparison()
                 .isEqualTo(params.build());
     }
@@ -86,7 +86,7 @@ public class LoadInAppPurchasesTest {
                 new SkuDetails("{\"productId\":\"bar\",\"type\":\"IN_APP\",\"price\":\"1.20\"}")
         ));
         final boolean[] whereQueried = {false};
-        loadInAppPurchases.setInAppProductsQueriedListener(new InAppProductsQueriedListener() {
+        appPurchases.setInAppProductsQueriedListener(new InAppProductsQueriedListener() {
             @Override
             public void onQueried(List<SkuDetails> skuDetailsList) {
                 assertEquals(mockSkuDetails, skuDetailsList);
@@ -94,7 +94,7 @@ public class LoadInAppPurchasesTest {
             }
         });
 
-        loadInAppPurchases.onSkuDetailsResponse(
+        appPurchases.onSkuDetailsResponse(
                 BillingResult.newBuilder().build(),
                 mockSkuDetails);
         assertTrue(whereQueried[0]);

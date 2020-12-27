@@ -1,4 +1,4 @@
-package com.jonahsebright.billingtest.loadInAppProducts;
+package com.jonahsebright.billingtest.app_products;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
