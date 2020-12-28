@@ -1,4 +1,4 @@
-package com.jonahsebright.billingtest.app_products;
+package com.jonahsebright.billingtest.load_buy_app_products;
 
 import com.android.billingclient.api.SkuDetails;
 import com.jonahsebright.billingtest.util.Converter;
@@ -7,16 +7,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProductsPresenter implements InAppProductsQueriedListener, Converter<SkuDetails, ProductModel> {
-    private LoadInAppProductsViewModel loadInAppProductsViewModel;
+    private AppProductsViewModel appProductsViewModel;
 
-    public void setLoadInAppProductsViewModel(LoadInAppProductsViewModel loadInAppProductsViewModel) {
-        this.loadInAppProductsViewModel = loadInAppProductsViewModel;
-        loadInAppProductsViewModel.setProducts(new ArrayList<>());
+    public void setAppProductsViewModel(AppProductsViewModel appProductsViewModel) {
+        this.appProductsViewModel = appProductsViewModel;
+        appProductsViewModel.setProducts(new ArrayList<>());
     }
 
     @Override
     public void onQueried(List<SkuDetails> skuDetailsList) {
-        loadInAppProductsViewModel.setProducts(convertItems(skuDetailsList));
+        appProductsViewModel.setProducts(convertItems(skuDetailsList));
     }
 
     @Override

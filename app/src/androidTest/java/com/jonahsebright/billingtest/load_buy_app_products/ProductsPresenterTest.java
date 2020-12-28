@@ -1,4 +1,4 @@
-package com.jonahsebright.billingtest.app_products;
+package com.jonahsebright.billingtest.load_buy_app_products;
 
 import com.android.billingclient.api.SkuDetails;
 import com.jonahsebright.billingtest.TestUtils;

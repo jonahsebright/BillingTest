@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">BillingTest</string>
+    <string name="prompt_purchase_cancelled">You cancelled the purchase</string>
+    <string name="prompt_purchase_failed">Purchase failed</string>
 </resources>

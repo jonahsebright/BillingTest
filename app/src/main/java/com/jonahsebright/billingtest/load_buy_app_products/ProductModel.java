@@ -1,4 +1,4 @@
-package com.jonahsebright.billingtest.app_products;
+package com.jonahsebright.billingtest.load_buy_app_products;
 
 public class ProductModel {
     private final String id;
