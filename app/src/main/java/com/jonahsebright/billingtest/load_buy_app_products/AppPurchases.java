@@ -25,22 +25,55 @@ import com.jonahsebright.billingtest.util.IdContainer;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.jonahsebright.billingtest.app_products.AppProducts.getSubscriptionSkuList;
+
 /**
  * Controller of the Pay use-case
  * <p>
  * see https://developer.android.com/google/play/billing/integrate#initialize
  */
-public class AppPurchases implements SkuDetailsResponseListener, PurchasesUpdatedListener {
+public class AppPurchases implements PurchasesUpdatedListener {
 
     private BillingClient billingClient;
-    private InAppProductsQueriedListener inAppProductsQueriedListener;
-    private List<SkuDetails> skuDetailsList;
+    private ProductsQueriedListener inAppProductsQueriedListener;
+    private ProductsQueriedListener subsQueriedListener;
+    private List<SkuDetails> inAppSkuDetailsList;
+    private List<SkuDetails> subsSkuDetailsList;
     private ArrayList<PurchaseEntitlementGrantedListener> entitlementGrantedListeners;
+    private SkuDetailsResponseListener inAppSkuDetailsResponseListener;
+    private SkuDetailsResponseListener subsSkuDetailsResponseListener;
 
     public AppPurchases(@NonNull Context context, ArrayList<PurchaseEntitlementGrantedListener> entitlementGrantedListeners) {
         this.entitlementGrantedListeners = entitlementGrantedListeners;
-        inAppProductsQueriedListener = new NoInAppProductsQueriedListener();
+        inAppProductsQueriedListener = new NoProductsQueriedListener();
+        subsQueriedListener = new NoProductsQueriedListener();
+        initSkuDetailsResponseListeners();
         initBillingClient(context);
+    }
+
+    private void initSkuDetailsResponseListeners() {
+        inAppSkuDetailsResponseListener = new SkuDetailsResponseListener() {
+            @Override
+            public void onSkuDetailsResponse(@NonNull BillingResult billingResult, @Nullable List<SkuDetails> list) {
+                inAppSkuDetailsList = list;
+                inAppProductsQueriedListener.onQueried(list);
+            }
+        };
+        subsSkuDetailsResponseListener = new SkuDetailsResponseListener() {
+            @Override
+            public void onSkuDetailsResponse(@NonNull BillingResult billingResult, @Nullable List<SkuDetails> list) {
+                subsSkuDetailsList = list;
+                subsQueriedListener.onQueried(list);
+            }
+        };
+    }
+
+    public SkuDetailsResponseListener getInAppSkuDetailsResponseListener() {
+        return inAppSkuDetailsResponseListener;
+    }
+
+    public SkuDetailsResponseListener getSubsSkuDetailsResponseListener() {
+        return subsSkuDetailsResponseListener;
     }
 
     public static BillingFlowParams buildBillingFlowParams(SkuDetails skuDetails) {
@@ -51,7 +84,7 @@ public class AppPurchases implements SkuDetailsResponseListener, PurchasesUpdate
 
     public void launchBillingFlow(Activity activity, int posSkuDetails) {
         //see https://developer.android.com/google/play/billing/integrate#launch
-        SkuDetails skuDetails = skuDetailsList.get(posSkuDetails);
+        SkuDetails skuDetails = inAppSkuDetailsList.get(posSkuDetails);
         BillingResult billingResult = billingClient.launchBillingFlow(activity, buildBillingFlowParams(skuDetails));
         int responseCode = billingResult.getResponseCode();
         if (responseCode == BillingResponseCode.OK) {
@@ -76,6 +109,7 @@ public class AppPurchases implements SkuDetailsResponseListener, PurchasesUpdate
                 if (billingResult.getResponseCode() == BillingResponseCode.OK) {
                     // The BillingClient is ready. You can query purchases here.
                     queryInAppPurchases();
+                    querySubs();
                 }
             }
 
@@ -89,7 +123,11 @@ public class AppPurchases implements SkuDetailsResponseListener, PurchasesUpdate
 
     private void queryInAppPurchases() {
         //See https://developer.android.com/google/play/billing/integrate#show-products
-        billingClient.querySkuDetailsAsync(getInAppSkuDetailsParams(), this);
+        billingClient.querySkuDetailsAsync(getInAppSkuDetailsParams(), inAppSkuDetailsResponseListener);
+    }
+
+    private void querySubs() {
+        billingClient.querySkuDetailsAsync(getSubsSkuDetailsParams(), subsSkuDetailsResponseListener);
     }
 
     private void initBillingClient(@NonNull Context context) {
@@ -103,29 +141,21 @@ public class AppPurchases implements SkuDetailsResponseListener, PurchasesUpdate
         return billingClient;
     }
 
-    public SkuDetailsParams getInAppSkuDetailsParams() {
+    public static SkuDetailsParams getInAppSkuDetailsParams() {
         SkuDetailsParams.Builder params = SkuDetailsParams.newBuilder();
         params.setSkusList(AppProducts.getInAppSkuList()).setType(BillingClient.SkuType.INAPP);
         return params.build();
     }
 
-    @Override
-    public void onSkuDetailsResponse(@NonNull BillingResult billingResult, @Nullable List<SkuDetails> list) {
-        System.out.println("LoadInAppPurchases.onSkuDetailsResponse");
-        int responseCode = billingResult.getResponseCode();
-        boolean billingUnavailable = responseCode == BillingResponseCode.BILLING_UNAVAILABLE;
-        System.out.println("billingUnavailable = " + billingUnavailable);
-        String debugMessage = billingResult.getDebugMessage();
-        System.out.println("debugMessage = " + debugMessage);
-        this.skuDetailsList = list;
-        inAppProductsQueriedListener.onQueried(list);
-    }
-
-    public void setInAppProductsQueriedListener(InAppProductsQueriedListener inAppProductsQueriedListener) {
+    public void setInAppProductsQueriedListener(ProductsQueriedListener inAppProductsQueriedListener) {
         this.inAppProductsQueriedListener = inAppProductsQueriedListener;
     }
 
-    public InAppProductsQueriedListener getInAppProductsQueriedListener() {
+    public void setSubsQueriedListener(ProductsQueriedListener subsQueriedListener) {
+        this.subsQueriedListener = subsQueriedListener;
+    }
+
+    public ProductsQueriedListener getInAppProductsQueriedListener() {
         return inAppProductsQueriedListener;
     }
 
@@ -153,11 +183,11 @@ public class AppPurchases implements SkuDetailsResponseListener, PurchasesUpdate
         // Grant entitlement to the user.
 
         String productId = purchase.getSku();
-         if(ProductTypeIdentifier.isConsumable(productId))
+        if (ProductTypeIdentifier.isConsumable(productId))
             grantEntitlementToConsumableAndConsume(purchase);
-        else if(ProductTypeIdentifier.isNonConsumable(productId))
+        else if (ProductTypeIdentifier.isNonConsumable(productId))
             grantEntitlementToNonConsumable(purchase);
-        else if(ProductTypeIdentifier.isSubscription(productId)){
+        else if (ProductTypeIdentifier.isSubscription(productId)) {
             grantEntitlementToSubscription(purchase);
         }
     }
@@ -193,12 +223,19 @@ public class AppPurchases implements SkuDetailsResponseListener, PurchasesUpdate
                 purchase.getSku(), entitlementGrantedListeners);
         if (listener != null) {
             listener.onEntitlementGranted(purchase);
-        }  else {
+        } else {
             //TODO: tell user granting entitlement failed
         }
     }
 
-    public static class NoInAppProductsQueriedListener implements InAppProductsQueriedListener {
+    public static SkuDetailsParams getSubsSkuDetailsParams() {
+        return SkuDetailsParams.newBuilder()
+                .setSkusList(getSubscriptionSkuList())
+                .setType(BillingClient.SkuType.SUBS)
+                .build();
+    }
+
+    public static class NoProductsQueriedListener implements ProductsQueriedListener {
         @Override
         public void onQueried(List<SkuDetails> skuDetailsList) {
 

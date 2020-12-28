@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class PurchaseEntitlementGrantedListenersFactoryTest {
 
@@ -22,8 +21,8 @@ class PurchaseEntitlementGrantedListenersFactoryTest {
 
             }
         };
-        expected.add(new GemsConsumedHandler(AppProducts.Product.TEST_1, gemsChangedListener));
-        assertThat(PurchaseEntitlementGrantedListenersFactory.createAll(gemsChangedListener))
+        expected.add(new GemsConsumedHandler(AppProducts.Product.TEST_1, gemsChangedListener, null));
+        assertThat(PurchaseEntitlementGrantedListenersFactory.createAll(gemsChangedListener, null))
                 .usingRecursiveComparison()
                 .isEqualTo(expected);
     }

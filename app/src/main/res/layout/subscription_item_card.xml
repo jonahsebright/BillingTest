@@ -19,16 +19,16 @@
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="30 Gems" />
+            tools:text="Upgrade Premium" />
 
         <TextView
-            android:id="@+id/price"
+            android:id="@+id/pricePerPeriod"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             app:layout_constraintBaseline_toBaselineOf="@+id/product_name"
             app:layout_constraintEnd_toEndOf="parent"
-            tools:text="CHF 1.20" />
+            tools:text="CHF 1.20 / month" />
 
         <TextView
             android:id="@+id/product_description"
@@ -39,19 +39,42 @@
             android:layout_marginBottom="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/subscribe"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/product_name"
-            app:layout_constraintTop_toBottomOf="@+id/product_name"
-            tools:text="Get 30 more gems" />
+            app:layout_constraintTop_toBottomOf="@+id/advantages"
+            tools:text="Upgrade to premium to have better app experience" />
 
         <Button
-            android:id="@+id/buy"
+            android:id="@+id/subscribe"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:text="Buy"
+            android:layout_marginEnd="12dp"
+            android:text="Subscribe"
             app:layout_constraintBottom_toBottomOf="@+id/product_description"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/product_description" />
+            app:layout_constraintTop_toTopOf="@+id/product_description"
+            app:layout_constraintVertical_bias="0.811" />
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Advantages:"
+            android:textColor="@android:color/holo_green_light"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/product_name"
+            app:layout_constraintTop_toBottomOf="@+id/product_name" />
+
+        <TextView
+            android:id="@+id/advantages"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="@+id/textView4"
+            app:layout_constraintTop_toBottomOf="@+id/textView4"
+            tools:text="1. Red Gems\n2. Gem Icon" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.jonahsebright.billingtest.TestUtils.mockSkuDetails;
+import static com.jonahsebright.billingtest.TestUtils.mockInAppSkuDetails;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -32,7 +32,7 @@ public class AppPurchasesTest {
 
     @Test
     public void Create_NoInAppProductsQueriedListenerOnInit() throws Exception {
-        assertThat(appPurchases.getInAppProductsQueriedListener()).isInstanceOf(AppPurchases.NoInAppProductsQueriedListener.class);
+        assertThat(appPurchases.getInAppProductsQueriedListener()).isInstanceOf(AppPurchases.NoProductsQueriedListener.class);
     }
 
     @Test
@@ -58,7 +58,7 @@ public class AppPurchasesTest {
         SkuDetailsParams.Builder params = SkuDetailsParams.newBuilder()
                 .setSkusList(AppProducts.getInAppSkuList())
                 .setType(BillingClient.SkuType.INAPP);
-        assertThat(appPurchases.getInAppSkuDetailsParams())
+        assertThat(AppPurchases.getInAppSkuDetailsParams())
                 .usingRecursiveComparison()
                 .isEqualTo(params.build());
     }
@@ -70,7 +70,7 @@ public class AppPurchasesTest {
                 new SkuDetails("{\"productId\":\"bar\",\"type\":\"IN_APP\",\"price\":\"1.20\"}")
         ));
         final boolean[] whereQueried = {false};
-        appPurchases.setInAppProductsQueriedListener(new InAppProductsQueriedListener() {
+        appPurchases.setInAppProductsQueriedListener(new ProductsQueriedListener() {
             @Override
             public void onQueried(List<SkuDetails> skuDetailsList) {
                 assertEquals(mockSkuDetails, skuDetailsList);
@@ -78,7 +78,7 @@ public class AppPurchasesTest {
             }
         });
 
-        appPurchases.onSkuDetailsResponse(
+        appPurchases.getInAppSkuDetailsResponseListener().onSkuDetailsResponse(
                 BillingResult.newBuilder().build(),
                 mockSkuDetails);
         assertTrue(whereQueried[0]);
@@ -86,7 +86,7 @@ public class AppPurchasesTest {
 
     @Test
     public void createdCorrectBillingFlowParams() throws Exception {
-        SkuDetails skuDetails = mockSkuDetails("foo_id", "IN_APP", "Foo", "3.50 CHF",
+        SkuDetails skuDetails = mockInAppSkuDetails("foo_id", "Foo", "3.50 CHF",
                 "3500000", "CHF", "bar");
         BillingFlowParams expected = BillingFlowParams.newBuilder()
                 .setSkuDetails(skuDetails)
@@ -95,4 +95,15 @@ public class AppPurchasesTest {
                 .usingRecursiveComparison()
                 .isEqualTo(expected);
     }
+
+    @Test
+    public void getSkuDetailsParamsForSubsPurchases() throws Exception {
+        SkuDetailsParams.Builder params = SkuDetailsParams.newBuilder()
+                .setSkusList(AppProducts.getSubscriptionSkuList())
+                .setType(BillingClient.SkuType.SUBS);
+        assertThat(AppPurchases.getSubsSkuDetailsParams())
+                .usingRecursiveComparison()
+                .isEqualTo(params.build());
+    }
+
 }

@@ -6,13 +6,22 @@ import androidx.lifecycle.ViewModel;
 import java.util.ArrayList;
 
 public class AppProductsViewModel extends ViewModel {
-    private MutableLiveData<ArrayList<ProductModel>> products = new MutableLiveData<>();
+    private MutableLiveData<ArrayList<InAppProductModel>> inAppProducts = new MutableLiveData<>();
+    private MutableLiveData<ArrayList<SubscriptionProductModel>> subscriptionModels = new MutableLiveData<>();
 
-    public MutableLiveData<ArrayList<ProductModel>> getProducts() {
-        return products;
+    public MutableLiveData<ArrayList<InAppProductModel>> getInAppProducts() {
+        return inAppProducts;
     }
 
-    public void setProducts(ArrayList<ProductModel> products) {
-        this.products.setValue(products);
+    public void setInAppProducts(ArrayList<InAppProductModel> inAppProducts) {
+        this.inAppProducts.setValue(inAppProducts);
+    }
+
+    public MutableLiveData<ArrayList<SubscriptionProductModel>> getSubscriptionModels() {
+        return subscriptionModels;
+    }
+
+    public void setSubscriptionModels(ArrayList<SubscriptionProductModel> subscriptionModels) {
+        this.subscriptionModels.setValue(subscriptionModels);
     }
 }

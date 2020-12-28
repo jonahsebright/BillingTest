@@ -8,15 +8,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import com.jonahsebright.billingtest.R;
-import com.jonahsebright.billingtest.util.adapter.ModelAdapter;
-import com.jonahsebright.billingtest.util.adapter.ModelViewHolder;
 import com.jonahsebright.billingtest.util.adapter.OnViewInItemClickListener;
 
 import java.util.ArrayList;
 
-public class InAppProductAdapter extends ModelAdapter<ProductModel, InAppProductAdapter.InAppProductViewHolder, Button> {
+public class InAppProductAdapter extends ProductAdapter<InAppProductModel> {
 
-    public InAppProductAdapter(ArrayList<ProductModel> models) {
+
+    public InAppProductAdapter(ArrayList<InAppProductModel> models) {
         super(models);
     }
 
@@ -31,18 +30,14 @@ public class InAppProductAdapter extends ModelAdapter<ProductModel, InAppProduct
         return R.layout.product_item_card;
     }
 
-    static class InAppProductViewHolder extends ModelViewHolder<ProductModel> {
-        private final TextView tvName;
+    static class InAppProductViewHolder extends ProductViewHolder<InAppProductModel> {
         private final TextView tvPrice;
-        private final TextView tvDescription;
         private final Button buy;
 
         public InAppProductViewHolder(@NonNull View itemView, OnViewInItemClickListener<Button> onViewInItemClickListener) {
-            super(itemView);
-            tvName = itemView.findViewById(R.id.product_name);
+            super(itemView, onViewInItemClickListener);
             tvPrice = itemView.findViewById(R.id.price);
-            tvDescription = itemView.findViewById(R.id.product_description);
-            buy = itemView.findViewById(R.id.buyProduct);
+            buy = itemView.findViewById(R.id.buy);
 
             buy.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -53,10 +48,15 @@ public class InAppProductAdapter extends ModelAdapter<ProductModel, InAppProduct
         }
 
         @Override
-        public <V> void bindData(ProductModel model, int position) {
+        protected Button getButton() {
+            return itemView.findViewById(R.id.buy);
+        }
+
+        @Override
+        public void bindData(InAppProductModel model, int position) {
             tvName.setText(model.getName());
-            tvPrice.setText(model.getPrice());
             tvDescription.setText(model.getDescription());
+            tvPrice.setText(model.getPrice());
         }
     }
 }

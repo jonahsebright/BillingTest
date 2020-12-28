@@ -13,17 +13,33 @@ public class TestUtils {
         return InstrumentationRegistry.getTargetContext();
     }
 
-    public static SkuDetails mockSkuDetails(String productId, String type, String name,
-                                            String price, String price_amount_micros, String currencyCode, String descr) throws JSONException {
+    public static SkuDetails mockInAppSkuDetails(String productId, String name,
+                                                 String price, String price_amount_micros, String currencyCode, String descr) throws JSONException {
+        return new SkuDetails(
+                "{\"productId\":\"" + productId +
+                        "\",\"type\":\"" + "IN_APP" +
+                        "\"," +
+                        "\"title\":\"" + name +
+                        "\",\"price\":\"" + price +
+                        "\",\"price_amount_micros\":\"" + price_amount_micros +
+                        "\"," +
+                        "\"price_currency_code\":\"" + currencyCode +
+                        "\",\"description\":\"" + descr +
+                        "\"}");
+    }
+
+    public static SkuDetails mockSubscriptionSkuDetails(String productId, String name,
+                                                        String price, String price_amount_micros, String currencyCode, String descr,
+                                                        String subscriptionPeriod) throws JSONException {
         return new SkuDetails("{\"productId\":\"" + productId +
-                "\",\"type\":\"" + type +
+                "\",\"type\":\"" + "SUBS" +
                 "\"," +
                 "\"title\":\"" + name +
                 "\",\"price\":\"" + price +
                 "\",\"price_amount_micros\":\"" + price_amount_micros +
-                "\"," +
-                "\"price_currency_code\":\"" + currencyCode +
+                "\",\"price_currency_code\":\"" + currencyCode +
                 "\",\"description\":\"" + descr +
+                "\",\"subscriptionPeriod\":\"" + subscriptionPeriod +
                 "\"}");
     }
 }

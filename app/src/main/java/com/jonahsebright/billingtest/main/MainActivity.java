@@ -15,8 +15,12 @@ import com.jonahsebright.billingtest.app_products.PurchaseEntitlementGrantedList
 import com.jonahsebright.billingtest.load_buy_app_products.AppProductsViewModel;
 import com.jonahsebright.billingtest.load_buy_app_products.AppPurchases;
 import com.jonahsebright.billingtest.load_buy_app_products.InAppProductAdapter;
-import com.jonahsebright.billingtest.load_buy_app_products.ProductModel;
+import com.jonahsebright.billingtest.load_buy_app_products.InAppProductModel;
+import com.jonahsebright.billingtest.load_buy_app_products.InAppProductsPresenter;
 import com.jonahsebright.billingtest.load_buy_app_products.ProductsPresenter;
+import com.jonahsebright.billingtest.load_buy_app_products.SubscriptionAdapter;
+import com.jonahsebright.billingtest.load_buy_app_products.SubscriptionProductModel;
+import com.jonahsebright.billingtest.load_buy_app_products.SubscriptionProductsPresenter;
 import com.jonahsebright.billingtest.util.adapter.OnViewInItemClickListener;
 import com.jonahsebright.billingtest.util.storage.SharedPreferenceHelper;
 
@@ -27,7 +31,8 @@ import static com.jonahsebright.billingtest.app_products.gems.GemsConsumedHandle
 public class MainActivity extends AppCompatActivity {
 
     private AppProductsViewModel appProductsViewModel;
-    private InAppProductAdapter productAdapter;
+    private InAppProductAdapter inAppProductAdapter;
+    private SubscriptionAdapter subscriptionAdapter;
     private AppPurchases appPurchases;
     private MainViewModel mainViewModel;
 
@@ -42,13 +47,38 @@ public class MainActivity extends AppCompatActivity {
         GemsPresenter gemsPresenter = new GemsPresenter(mainViewModel, getApplicationContext());
         appPurchases = new AppPurchases(getApplicationContext(),
                 PurchaseEntitlementGrantedListenersFactory.createAll(gemsPresenter, getApplicationContext()));
-        ProductsPresenter productsPresenter = new ProductsPresenter();
-        productsPresenter.setAppProductsViewModel(appProductsViewModel);
-        appPurchases.setInAppProductsQueriedListener(productsPresenter);
+        ProductsPresenter<InAppProductModel> inAppProductsPresenter = new InAppProductsPresenter();
+        appProductsViewModel.setInAppProducts(new ArrayList<>());
+        appProductsViewModel.setSubscriptionModels(new ArrayList<>());
+        inAppProductsPresenter.setAppProductsViewModel(appProductsViewModel);
+        ProductsPresenter<SubscriptionProductModel> subsPresenter = new SubscriptionProductsPresenter();
+        subsPresenter.setAppProductsViewModel(appProductsViewModel);
+        appPurchases.setInAppProductsQueriedListener(inAppProductsPresenter);
+        appPurchases.setSubsQueriedListener(subsPresenter);
         appPurchases.startConnectionToGooglePlay();
 
-        setupProductsListView();
+        setupInAppProductsListView();
+        setupSubscriptionsListView();
         setupGemsView();
+    }
+
+    private void setupSubscriptionsListView() {
+        RecyclerView subscriptionsListView = findViewById(R.id.subscriptions);
+        subscriptionsListView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        subscriptionAdapter = new SubscriptionAdapter(new ArrayList<>());
+        subscriptionsListView.setAdapter(subscriptionAdapter);
+        subscriptionAdapter.setOnViewInItemClickListener(new OnViewInItemClickListener<Button>() {
+            @Override
+            public void onViewClicked(Button buyProduct, int position) {
+                //TODO launchPurchaseFlow(position);
+            }
+        });
+        appProductsViewModel.getSubscriptionModels().observe(this, new Observer<ArrayList<SubscriptionProductModel>>() {
+            @Override
+            public void onChanged(ArrayList<SubscriptionProductModel> subscriptionProductModels) {
+                subscriptionAdapter.setModelsAndUpdateView(subscriptionProductModels);
+            }
+        });
     }
 
     private void initStartValuesOfViewModels() {
@@ -72,21 +102,21 @@ public class MainActivity extends AppCompatActivity {
         mainViewModel = new ViewModelProvider(this, factory).get(MainViewModel.class);
     }
 
-    private void setupProductsListView() {
-        RecyclerView productsListView = findViewById(R.id.products);
+    private void setupInAppProductsListView() {
+        RecyclerView productsListView = findViewById(R.id.productsInApp);
         productsListView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        productAdapter = new InAppProductAdapter(new ArrayList<>());
-        productsListView.setAdapter(productAdapter);
-        productAdapter.setOnViewInItemClickListener(new OnViewInItemClickListener<Button>() {
+        inAppProductAdapter = new InAppProductAdapter(new ArrayList<>());
+        productsListView.setAdapter(inAppProductAdapter);
+        inAppProductAdapter.setOnViewInItemClickListener(new OnViewInItemClickListener<Button>() {
             @Override
             public void onViewClicked(Button buyProduct, int position) {
                 launchPurchaseFlow(position);
             }
         });
-        appProductsViewModel.getProducts().observe(this, new Observer<ArrayList<ProductModel>>() {
+        appProductsViewModel.getInAppProducts().observe(this, new Observer<ArrayList<InAppProductModel>>() {
             @Override
-            public void onChanged(ArrayList<ProductModel> productModels) {
-                productAdapter.setModelsAndUpdateView(productModels);
+            public void onChanged(ArrayList<InAppProductModel> productModels) {
+                inAppProductAdapter.setModelsAndUpdateView(productModels);
             }
         });
     }

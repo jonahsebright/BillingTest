@@ -11,5 +11,5 @@ public abstract class ModelViewHolder<M> extends RecyclerView.ViewHolder{
         super(itemView);
     }
 
-    public abstract <V> void bindData(M model, int position);
+    public abstract void bindData(M model, int position);
 }
