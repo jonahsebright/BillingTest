@@ -18,8 +18,11 @@ import com.jonahsebright.billingtest.load_buy_app_products.InAppProductAdapter;
 import com.jonahsebright.billingtest.load_buy_app_products.ProductModel;
 import com.jonahsebright.billingtest.load_buy_app_products.ProductsPresenter;
 import com.jonahsebright.billingtest.util.adapter.OnViewInItemClickListener;
+import com.jonahsebright.billingtest.util.storage.SharedPreferenceHelper;
 
 import java.util.ArrayList;
+
+import static com.jonahsebright.billingtest.app_products.gems.GemsConsumedHandler.KEY_GEMS;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,9 +37,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         initViewModels();
-
+        initStartValuesOfViewModels();
         //TODO PurchasePresenter purchasePresenter = new PurchasePresenter(getApplicationContext());
-        GemsPresenter gemsPresenter = new GemsPresenter(mainViewModel);
+        GemsPresenter gemsPresenter = new GemsPresenter(mainViewModel, getApplicationContext());
         appPurchases = new AppPurchases(getApplicationContext(),
                 PurchaseEntitlementGrantedListenersFactory.createAll(gemsPresenter, getApplicationContext()));
         ProductsPresenter productsPresenter = new ProductsPresenter();
@@ -46,6 +49,11 @@ public class MainActivity extends AppCompatActivity {
 
         setupProductsListView();
         setupGemsView();
+    }
+
+    private void initStartValuesOfViewModels() {
+        int currentGems = new SharedPreferenceHelper(getApplicationContext()).getInt(KEY_GEMS, 0);
+        mainViewModel.setGems(currentGems);
     }
 
     private void setupGemsView() {
