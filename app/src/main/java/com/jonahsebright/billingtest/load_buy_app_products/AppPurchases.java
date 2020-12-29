@@ -78,15 +78,22 @@ public class AppPurchases implements PurchasesUpdatedListener {
         return subsSkuDetailsResponseListener;
     }
 
+    public List<SkuDetails> getInAppSkuDetailsList() {
+        return inAppSkuDetailsList;
+    }
+
+    public List<SkuDetails> getSubsSkuDetailsList() {
+        return subsSkuDetailsList;
+    }
+
     public static BillingFlowParams buildBillingFlowParams(SkuDetails skuDetails) {
         return BillingFlowParams.newBuilder()
                 .setSkuDetails(skuDetails)
                 .build();
     }
 
-    public void launchBillingFlow(Activity activity, int posSkuDetails) {
+    public void launchBillingFlow(Activity activity, SkuDetails skuDetails) {
         //see https://developer.android.com/google/play/billing/integrate#launch
-        SkuDetails skuDetails = inAppSkuDetailsList.get(posSkuDetails);
         BillingResult billingResult = billingClient.launchBillingFlow(activity, buildBillingFlowParams(skuDetails));
         int responseCode = billingResult.getResponseCode();
         if (responseCode == BillingResponseCode.OK) {

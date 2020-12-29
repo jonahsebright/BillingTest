@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.billingclient.api.SkuDetails;
 import com.jonahsebright.billingtest.R;
 import com.jonahsebright.billingtest.app_products.PurchaseEntitlementGrantedListenersFactory;
 import com.jonahsebright.billingtest.app_products.gems.GemsPresenter;
@@ -54,22 +55,29 @@ public class ProductsFragment extends Fragment {
         initViewModels();
         initStartValuesOfViewModels();
         //TODO PurchasePresenter purchasePresenter = new PurchasePresenter(getActivity());
-        GemsPresenter gemsPresenter = new GemsPresenter(mainViewModel, getActivity());
-        appPurchases = new AppPurchases(getActivity(),
-                PurchaseEntitlementGrantedListenersFactory.createAll(gemsPresenter, getActivity()));
-        ProductsPresenter<InAppProductModel> inAppProductsPresenter = new InAppProductsPresenter();
-        appProductsViewModel.setInAppProducts(new ArrayList<>());
-        appProductsViewModel.setSubscriptionModels(new ArrayList<>());
-        inAppProductsPresenter.setAppProductsViewModel(appProductsViewModel);
-        ProductsPresenter<SubscriptionProductModel> subsPresenter = new SubscriptionProductsPresenter();
-        subsPresenter.setAppProductsViewModel(appProductsViewModel);
-        appPurchases.setInAppProductsQueriedListener(inAppProductsPresenter);
-        appPurchases.setSubsQueriedListener(subsPresenter);
-        appPurchases.startConnectionToGooglePlay();
+        setupAppPurchases();
 
         setupInAppProductsListView();
         setupSubscriptionsListView();
         setupGemsView();
+    }
+
+    private void setupAppPurchases() {
+        GemsPresenter gemsPresenter = new GemsPresenter(mainViewModel, getActivity());
+        appPurchases = new AppPurchases(getActivity(),
+                PurchaseEntitlementGrantedListenersFactory.createAll(gemsPresenter, getActivity()));
+        setQueriedListenersToDisplayResults();
+        appPurchases.startConnectionToGooglePlay();
+    }
+
+    private void setQueriedListenersToDisplayResults() {
+        ProductsPresenter<InAppProductModel> inAppProductsPresenter = new InAppProductsPresenter();
+        inAppProductsPresenter.setAppProductsViewModel(appProductsViewModel);
+        appPurchases.setInAppProductsQueriedListener(inAppProductsPresenter);
+
+        ProductsPresenter<SubscriptionProductModel> subsPresenter = new SubscriptionProductsPresenter();
+        subsPresenter.setAppProductsViewModel(appProductsViewModel);
+        appPurchases.setSubsQueriedListener(subsPresenter);
     }
 
     private void setupSubscriptionsListView() {
@@ -80,7 +88,7 @@ public class ProductsFragment extends Fragment {
         subscriptionAdapter.setOnViewInItemClickListener(new OnViewInItemClickListener<Button>() {
             @Override
             public void onViewClicked(Button buyProduct, int position) {
-                //TODO launchPurchaseFlow(position);
+                launchSubsPurchaseFlow(position);
             }
         });
         appProductsViewModel.getSubscriptionModels().observe(getViewLifecycleOwner(), new Observer<ArrayList<SubscriptionProductModel>>() {
@@ -94,6 +102,8 @@ public class ProductsFragment extends Fragment {
     private void initStartValuesOfViewModels() {
         int currentGems = new SharedPreferenceHelper(getActivity()).getInt(KEY_GEMS, 0);
         mainViewModel.setGems(currentGems);
+        appProductsViewModel.setInAppProducts(new ArrayList<>());
+        appProductsViewModel.setSubscriptionModels(new ArrayList<>());
     }
 
     private void setupGemsView() {
@@ -120,7 +130,7 @@ public class ProductsFragment extends Fragment {
         inAppProductAdapter.setOnViewInItemClickListener(new OnViewInItemClickListener<Button>() {
             @Override
             public void onViewClicked(Button buyProduct, int position) {
-                launchPurchaseFlow(position);
+                launchInAppProductPurchaseFlow(position);
             }
         });
         appProductsViewModel.getInAppProducts().observe(getViewLifecycleOwner(), new Observer<ArrayList<InAppProductModel>>() {
@@ -131,7 +141,13 @@ public class ProductsFragment extends Fragment {
         });
     }
 
-    private void launchPurchaseFlow(int positionProduct) {
-        appPurchases.launchBillingFlow(getActivity(), positionProduct);
+    private void launchInAppProductPurchaseFlow(int positionProduct) {
+        SkuDetails skuDetails = appPurchases.getInAppSkuDetailsList().get(positionProduct);
+        appPurchases.launchBillingFlow(getActivity(), skuDetails);
+    }
+
+    private void launchSubsPurchaseFlow(int positionSubs) {
+        SkuDetails skuDetails = appPurchases.getSubsSkuDetailsList().get(positionSubs);
+        appPurchases.launchBillingFlow(getActivity(), skuDetails);
     }
 }
