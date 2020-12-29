@@ -1,9 +1,9 @@
-package com.jonahsebright.billingtest.main;
+package com.jonahsebright.billingtest.app_products.gems;
 
 import android.content.Context;
 import android.widget.Toast;
 
-import com.jonahsebright.billingtest.app_products.gems.GemsChangedListener;
+import com.jonahsebright.billingtest.main.MainViewModel;
 
 public class GemsPresenter implements GemsChangedListener {
     private MainViewModel mainViewModel;
