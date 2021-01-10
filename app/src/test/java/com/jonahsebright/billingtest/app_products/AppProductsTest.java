@@ -1,5 +1,7 @@
 package com.jonahsebright.billingtest.app_products;
 
+import com.jonahsebright.billingtest.purchases.products.AppProducts;
+
 import org.junit.Test;
 
 import java.util.ArrayList;

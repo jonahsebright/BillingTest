@@ -5,18 +5,19 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class IdContainerTest {
     @Test
     public void canGetIdOfIdContainer() throws Exception {
         IdContainer idContainer = new IdContainer() {
             @Override
-            public String getProductId() {
+            public String getId() {
                 return "hello";
             }
         };
-        assertEquals("hello", idContainer.getProductId());
+        assertEquals("hello", idContainer.getId());
     }
 
 
@@ -70,7 +71,7 @@ class IdContainerTest {
         }
 
         @Override
-        public String getProductId() {
+        public String getId() {
             return id;
         }
     }

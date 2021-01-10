@@ -8,7 +8,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
 import com.jonahsebright.billingtest.R;
-import com.jonahsebright.billingtest.load_buy_app_products.ProductsFragment;
+import com.jonahsebright.billingtest.showproducts.ProductsFragment;
 import com.jonahsebright.billingtest.viewimage.ImageFragment;
 import com.jonahsebright.billingtest.viewtext.TextFragment;
 

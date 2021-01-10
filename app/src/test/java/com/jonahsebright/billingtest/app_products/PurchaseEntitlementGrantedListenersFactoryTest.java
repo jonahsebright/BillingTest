@@ -1,8 +1,10 @@
 package com.jonahsebright.billingtest.app_products;
 
-import com.jonahsebright.billingtest.app_products.gems.GemsChangedListener;
-import com.jonahsebright.billingtest.app_products.gems.GemsConsumedHandler;
-import com.jonahsebright.billingtest.load_buy_app_products.PurchaseEntitlementGrantedListener;
+import com.jonahsebright.billingtest.purchases.PurchaseEntitlementGrantedListenersFactory;
+import com.jonahsebright.billingtest.purchases.buy.PurchaseEntitlementGrantedListener;
+import com.jonahsebright.billingtest.purchases.products.AppProducts;
+import com.jonahsebright.billingtest.purchases.products.gems.GemsChangedListener;
+import com.jonahsebright.billingtest.purchases.products.gems.GemsConsumedHandler;
 
 import org.junit.jupiter.api.Test;
 
